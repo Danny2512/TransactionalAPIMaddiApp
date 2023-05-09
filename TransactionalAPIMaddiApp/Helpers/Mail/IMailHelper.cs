@@ -2,6 +2,6 @@
 {
     public interface IMailHelper
     {
-        Task<string> SendMail(string[] toEmails, string[] ccEmails, string subject, string body);
+        Task<dynamic> SendMail(string[] toEmails, string[] ccEmails, string subject, string body);
     }
 }

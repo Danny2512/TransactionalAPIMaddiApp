@@ -2,9 +2,10 @@
 
 namespace TransactionalAPIMaddiApp.Models
 {
-    public class ProcedureViewModel
+    public class RecoverPasswordViewModel
     {
         [Required(ErrorMessage = "Es obligatorio el 0.")]
-        public string Procedure { get; set; }
+        public string User { get; set; }
+
     }
 }

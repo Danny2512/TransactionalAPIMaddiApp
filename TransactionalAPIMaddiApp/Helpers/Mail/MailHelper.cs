@@ -13,7 +13,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
         {
             _configuration = configuration;
         }
-        public async Task<string> SendMail(string[] toEmails, string[] ccEmails, string subject, string body)
+        public async Task<dynamic> SendMail(string[] toEmails, string[] ccEmails, string subject, string body)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                 {
                     message.To.Add(new MailboxAddress("", toEmail));
                 }
-                if(ccEmails != null && ccEmails.Count() != 0)
+                if (ccEmails != null && ccEmails.Count() != 0)
                 {
                     foreach (var ccEmail in ccEmails)
                     {
@@ -54,28 +54,28 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                     await client.SendAsync(message);
                     await client.DisconnectAsync(true);
                 }
-                return JsonSerializer.Serialize(new
+                return (new
                 {
-                    Rpta = 1,
-                    message = "Correo electrónico enviado"
+                    Rpta = "Correo electrónico enviado",
+                    Cod = "0"
                 });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("5.1.3"))
                 {
-                    return JsonSerializer.Serialize(new
+                    return (new
                     {
-                        codigo = -1,
-                        message = "Correo electrónico inválido"
+                        Rpta = "Correo electrónico inválido",
+                        Cod = "-1"
                     });
                 }
                 else
                 {
-                    return JsonSerializer.Serialize(new
+                    return (new
                     {
-                        codigo = -1,
-                        message = ex.Message
+                        Rpta = ex.Message.ToString(),
+                        Cod = "-1"
                     });
                 }
             }

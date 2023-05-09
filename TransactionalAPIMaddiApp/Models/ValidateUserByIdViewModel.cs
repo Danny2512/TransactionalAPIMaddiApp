@@ -2,9 +2,9 @@
 
 namespace TransactionalAPIMaddiApp.Models
 {
-    public class ProcedureViewModel
+    public class ValidateUserByIdViewModel
     {
         [Required(ErrorMessage = "Es obligatorio el 0.")]
-        public string Procedure { get; set; }
+        public Guid User_Id { get; set; }
     }
 }
