@@ -2,10 +2,10 @@
 
 namespace TransactionalAPIMaddiApp.Models
 {
-    public class RecoverPasswordViewModel
+    public class DeleteHeadquarterViewModel
     {
+        public Guid? User_Id { get; set; }
         [Required(ErrorMessage = "Es obligatorio el 0.")]
-        public string User { get; set; }
-
+        public Guid Headquarter_Id { get; set; }
     }
 }

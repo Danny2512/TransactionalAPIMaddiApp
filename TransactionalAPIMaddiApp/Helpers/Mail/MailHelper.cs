@@ -1,7 +1,5 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using System.Text;
-using System.Text.Json;
 
 namespace TransactionalAPIMaddiApp.Helpers.Mail
 {
@@ -56,7 +54,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                 }
                 return (new
                 {
-                    Rpta = "Correo electrónico enviado",
+                    Rpta = "Email enviado",
                     Cod = "0"
                 });
             }
@@ -66,7 +64,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                 {
                     return (new
                     {
-                        Rpta = "Correo electrónico inválido",
+                        Rpta = "Email inválido",
                         Cod = "-1"
                     });
                 }

@@ -25,5 +25,29 @@ namespace TransactionalAPIMaddiApp.Helpers.Token
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public bool ValidateToken(string token)
+        {
+            var key = Encoding.ASCII.GetBytes(KeyToken);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ using Microsoft.OpenApi.Models;
 using TransactionalAPIMaddiApp.Helpers.Token;
 using TransactionalAPIMaddiApp.Helpers.Mail;
 using TransactionalAPIMaddiApp.Repository.Account;
+using TransactionalAPIMaddiApp.Repository.Headquarters;
+using TransactionalAPIMaddiApp.Repository.Restaurant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddTransient<IRepositoryProcedure, RepositoryProcedure>();
 builder.Services.AddTransient<IRepositoryAccount, RepositoryAccount>();
+builder.Services.AddTransient<IRepositoryHeadquarters, RepositoryHeadquarters>();
+builder.Services.AddTransient<IRepositoryRestaurant, RepositoryRestaurant>();
 builder.Services.AddTransient<IMailHelper, MailHelper>();
 builder.Services.AddTransient<ITokenHelper, TokenHelper>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
