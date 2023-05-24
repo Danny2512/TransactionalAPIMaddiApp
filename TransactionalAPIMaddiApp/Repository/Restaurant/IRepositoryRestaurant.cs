@@ -4,6 +4,8 @@ namespace TransactionalAPIMaddiApp.Repository.Restaurant
 {
     public interface IRepositoryRestaurant
     {
-        Task<dynamic> GetRestaurantsByUser(GetRestaurantsByUserViewModel model);
+        Task<dynamic> DeleteRestaurant(DeleteRestaurantViewModel model);
+        Task<dynamic> GetRestaurantById(GetRestaurantByIdViewModel model);
+        Task<dynamic> UpdateRestaurant(UpdateRestaurantViewModel model);
     }
 }

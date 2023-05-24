@@ -64,12 +64,27 @@ namespace TransactionalAPIMaddiApp.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             var peticion = await _repository.Login(model);
-            var response = peticion[0]; 
+            var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             if (response.Id != null)
             {
                 var validateEmailConfirm = await _repository.ValidateEmailConfirm(response.Id);
                 var responseValidateEmailConfirm = validateEmailConfirm[0];
-
+                if (responseValidateEmailConfirm.Cod == "-1")
+                {
+                    return Ok(new
+                    {
+                        Rpta = responseValidateEmailConfirm.Rpta,
+                        Cod = responseValidateEmailConfirm.Cod
+                    });
+                }
                 if (responseValidateEmailConfirm.Cod == "0")
                 {
                     List<object> restaurants = new List<object>();
@@ -105,7 +120,7 @@ namespace TransactionalAPIMaddiApp.Controllers
                     SendMailToValidateConfrim(responseValidateEmailConfirm.StrEmail, responseValidateEmailConfirm.StrUser, responseValidateEmailConfirm.Id);
                     return Ok(new
                     {
-                        Rpta = "Se ha enviado un email de confirmación",
+                        Rpta = "Para continuar, se ha enviado un email de confirmación para activar tu cuenta",
                         Cod = "0"
                     });
 
@@ -143,6 +158,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             };
             var peticion = await _repository.ValidateUserById(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             if (response.Id != null)
             {
                 List<object> restaurants = new List<object>();
@@ -187,6 +210,14 @@ namespace TransactionalAPIMaddiApp.Controllers
         {
             var peticion = await _repository.GetOTP(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             if (response.Cod != "-1")
             {
                 return Ok(await _Mail.SendMail(new string[] { response.Email }, new string[] { }, "Recuperación de contraseña",
@@ -231,6 +262,14 @@ namespace TransactionalAPIMaddiApp.Controllers
         {
             var peticion = await _repository.ValidateOTP(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             return Ok(new
             {
                 Rpta = response.Rpta,
@@ -242,6 +281,14 @@ namespace TransactionalAPIMaddiApp.Controllers
         {
             var peticion = await _repository.ChangePasswordByOTP(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             List<object> restaurants = new List<object>();
             if (response.IdRestaurant != null)
             {

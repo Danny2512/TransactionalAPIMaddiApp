@@ -8,9 +8,9 @@ using TransactionalAPIMaddiApp.Repository.Procedure;
 namespace TransactionalAPIMaddiApp.Controllers
 {
     [EnableCors("PolicyCore")]
-    [Authorize]
-    [ApiController]
     [Route("api/[controller]/[action]")]
+    [ApiController]
+    [Authorize]
     public class TransactionalController : ControllerBase
     {
         private readonly IRepositoryProcedure _repository;

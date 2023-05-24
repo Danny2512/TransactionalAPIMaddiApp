@@ -7,12 +7,18 @@ using TransactionalAPIMaddiApp.Helpers.Token;
 using TransactionalAPIMaddiApp.Helpers.Mail;
 using TransactionalAPIMaddiApp.Repository.Account;
 using TransactionalAPIMaddiApp.Repository.Headquarters;
+using TransactionalAPIMaddiApp.Helpers.File;
+using TransactionalAPIMaddiApp.Data;
+using Microsoft.EntityFrameworkCore;
 using TransactionalAPIMaddiApp.Repository.Restaurant;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddDbContext<DataContext>(o =>
+{
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -46,6 +52,7 @@ builder.Services.AddTransient<IRepositoryHeadquarters, RepositoryHeadquarters>()
 builder.Services.AddTransient<IRepositoryRestaurant, RepositoryRestaurant>();
 builder.Services.AddTransient<IMailHelper, MailHelper>();
 builder.Services.AddTransient<ITokenHelper, TokenHelper>();
+builder.Services.AddTransient<IFileHelper, FileHelper>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         options.TokenValidationParameters = new TokenValidationParameters
@@ -82,6 +89,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

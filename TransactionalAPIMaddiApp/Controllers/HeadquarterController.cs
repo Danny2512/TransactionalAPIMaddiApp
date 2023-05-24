@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TransactionalAPIMaddiApp.Models;
@@ -9,6 +10,7 @@ namespace TransactionalAPIMaddiApp.Controllers
     [EnableCors("PolicyCore")]
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class HeadquarterController : ControllerBase
     {
         private readonly IRepositoryHeadquarters _repository;
@@ -36,6 +38,14 @@ namespace TransactionalAPIMaddiApp.Controllers
 
             }
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             if (response.Id != null)
             {
                 foreach (var item in peticion)
@@ -72,6 +82,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             model.User_Id = Guid.Parse(userIdClaim);
             var peticion = await _repository.GetHeadquarterById(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             if (response.Id != null)
             {
                 return Ok(new
@@ -107,6 +125,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             model.User_Id = Guid.Parse(userIdClaim);
             var peticion = await _repository.DeleteHeadquarter(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             return Ok(new
             {
                 Rpta = response.Rpta,
@@ -124,6 +150,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             model.User_Id = Guid.Parse(userIdClaim);
             var peticion = await _repository.UpdateHeadquarter(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             return Ok(new
             {
                 Rpta = response.Rpta,
@@ -141,6 +175,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             model.User_Id = Guid.Parse(userIdClaim);
             var peticion = await _repository.CreateHeadquarter(model);
             var response = peticion[0];
+            if (response.Cod == "-1")
+            {
+                return Ok(new
+                {
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
+                });
+            }
             return Ok(new
             {
                 Rpta = response.Rpta,

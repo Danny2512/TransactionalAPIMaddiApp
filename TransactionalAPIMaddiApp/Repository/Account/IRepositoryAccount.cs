@@ -12,5 +12,6 @@ namespace TransactionalAPIMaddiApp.Repository.Account
         Task<dynamic> UpdateUser(UpdateUserViewModel model);
         Task<dynamic> ValidateEmailConfirm(Guid User_Id);
         Task<dynamic> ConfimEmail(string User_Id);
+        Task<dynamic> ChangePassword(ChangePasswordViewModel model);
     }
 }

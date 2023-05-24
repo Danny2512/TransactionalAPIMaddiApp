@@ -19,9 +19,12 @@ namespace TransactionalAPIMaddiApp.Repository.Procedure
                 using var connection = new SqlConnection(connectioString);
                 return await connection.QueryAsync(@"EXEC " + procedure.Procedure + "");
             }
-            catch
+            catch (Exception ex)
             {
-                return new {Rpta = "Error en la transacción", Cod = "-1"};
+                return new[]
+                {
+                    new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                };
             }
         }
     }

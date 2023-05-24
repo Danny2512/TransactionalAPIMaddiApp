@@ -30,9 +30,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                                                             Phone = model.Phone
                                                         });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -50,9 +53,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                                                         });
 
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -66,9 +72,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                                                                 new
                                                                 { User = model.User, Password = model.Pass });
                 }
-                catch
+                catch(Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -80,9 +89,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                 {
                     return await connection.QueryAsync<dynamic>("exec sp_ValidateUserById @User_Id", new{ User_Id = model.User_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -95,9 +107,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                     return await connection.QueryAsync(@"exec sp_ValidateOTP @StrUser, @StrOTP;",
                                                         new { StrUser = model.User, StrOTP = model.Cod });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -110,9 +125,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                     return await connection.QueryAsync(@"exec sp_ChangePasswordByOTP @User_Id, @HsPassword, @StrOTP;",
                                                         new { User_Id = model.User_Id, HsPassword = model.Password, StrOTP = model.OTP });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -125,9 +143,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                     return await connection.QueryAsync(@"exec sp_GetOtpByUser @StrUser;",
                                                         new { StrUser = model.User });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -139,9 +160,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                 {
                     return await connection.QueryAsync(@"exec sp_ValidateEmailConfirm @User_Id;", new { User_Id = User_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -153,9 +177,12 @@ namespace TransactionalAPIMaddiApp.Repository.Account
                 {
                     return await connection.QueryAsync(@"exec sp_ConfirmEmail @User_Id;", new { User_Id = User_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return JsonSerializer.Serialize("0");//Corresponde a error en la transaccion
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }

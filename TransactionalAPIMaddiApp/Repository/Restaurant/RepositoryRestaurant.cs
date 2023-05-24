@@ -11,19 +11,68 @@ namespace TransactionalAPIMaddiApp.Repository.Restaurant
         {
             connectioString = configuration.GetConnectionString("DefaultConnection");
         }
-        public async Task<dynamic> GetRestaurantsByUser(GetRestaurantsByUserViewModel model)
+        public async Task<dynamic> GetRestaurantById(GetRestaurantByIdViewModel model)
         {
             using (var connection = new SqlConnection(connectioString))
             {
                 try
                 {
-                    return await connection.QueryAsync<dynamic>("exec sp_GetRestaurantsByUser @User_Id",
+                    return await connection.QueryAsync<dynamic>("exec sp_GetRestaurantById @User_Id, @Restaurant_Id",
                                                                 new
-                                                                { User_Id = model.User_Id });
+                                                                { User_Id = model.User_Id, Restaurant_Id = model.Restaurant_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
+                }
+            }
+        }
+        public async Task<dynamic> DeleteRestaurant(DeleteRestaurantViewModel model)
+        {
+            using (var connection = new SqlConnection(connectioString))
+            {
+                try
+                {
+                    return await connection.QueryAsync<dynamic>("exec sp_DeleteRestaurant @User_Id, @Restaurant_Id",
+                                                                new
+                                                                { User_Id = model.User_Id, Restaurant_Id = model.Restaurant_Id });
+                }
+                catch (Exception ex)
+                {
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
+                }
+            }
+        }
+        public async Task<dynamic> UpdateRestaurant(UpdateRestaurantViewModel model)
+        {
+            using (var connection = new SqlConnection(connectioString))
+            {
+                try
+                {
+                    return await connection.QueryAsync<dynamic>("exec sp_UpdateRestaurant @User_Id, @Restaurant_Id, @StrName, @StrNit, @Logo_AssetsFK, @StrDescription, @BiActive",
+                                                                new
+                                                                {
+                                                                    User_Id = model.User_Id,
+                                                                    Restaurant_Id = model.Restaurant_Id,
+                                                                    StrName = model.Name,
+                                                                    StrNit = model.Nit,
+                                                                    Logo_AssetsFK = model.Image_Id,
+                                                                    StrDescription = model.Description,
+                                                                    BiActive = model.BiActive
+                                                                });
+                }
+                catch (Exception ex)
+                {
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }

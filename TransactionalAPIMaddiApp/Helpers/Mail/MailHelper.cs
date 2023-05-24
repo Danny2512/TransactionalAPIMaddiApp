@@ -11,7 +11,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
         {
             _configuration = configuration;
         }
-        public async Task<dynamic> SendMail(string[] toEmails, string[] ccEmails, string subject, string body)
+        public async Task<object> SendMail(string[] toEmails, string[] ccEmails, string subject, string body)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                 };
                 message.Body = bodyBuilder.ToMessageBody();
 
-                using (SmtpClient client = new())
+                using (var client = new SmtpClient())
                 {
                     await client.ConnectAsync(smtp, int.Parse(port), false);
                     await client.AuthenticateAsync(from, password);

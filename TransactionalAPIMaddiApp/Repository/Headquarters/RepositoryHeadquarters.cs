@@ -21,9 +21,12 @@ namespace TransactionalAPIMaddiApp.Repository.Headquarters
                                                                 new
                                                                 { User_Id = model.User_Id, Restaurant_Id = model.Restaurant_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -37,9 +40,12 @@ namespace TransactionalAPIMaddiApp.Repository.Headquarters
                                                                 new
                                                                 { User_Id = model.User_Id, Headquarter_Id = model.Headquarter_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -51,11 +57,14 @@ namespace TransactionalAPIMaddiApp.Repository.Headquarters
                 {
                     return await connection.QueryAsync<dynamic>("exec sp_DeleteHeadquarter @User_Id, @Headquarter_Id",
                                                                 new
-                                                                { User_Id = model.User_Id, Headquarter_Id = model.@Headquarter_Id });
+                                                                { User_Id = model.User_Id, Headquarter_Id = model.Headquarter_Id });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -79,9 +88,12 @@ namespace TransactionalAPIMaddiApp.Repository.Headquarters
                                                                     BiActive = model.BiActive
                                                                 });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }
@@ -106,9 +118,12 @@ namespace TransactionalAPIMaddiApp.Repository.Headquarters
                                                                     BiActive = model.BiActive
                                                                 });
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new { Rpta = "Error en la transacción", Cod = "-1" };
+                    return new[]
+                    {
+                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
+                    };
                 }
             }
         }

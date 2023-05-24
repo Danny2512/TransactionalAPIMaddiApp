@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TransactionalAPIMaddiApp.Models
 {
-    public class GetHeadquartersByRestaurantViewModel
+    public class DeleteRestaurantViewModel
     {
         [JsonIgnore]
         public Guid User_Id { get; set; }

@@ -1,8 +1,11 @@
-﻿namespace TransactionalAPIMaddiApp.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TransactionalAPIMaddiApp.Models
 {
     public class UpdateUserViewModel
     {
-        public Guid? User_Id { get; set; }
+        [JsonIgnore]
+        public Guid User_Id { get; set; }
         public string Name { get; set; }
         public string NameUser { get; set; }
         public string Document { get; set; }
