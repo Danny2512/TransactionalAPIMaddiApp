@@ -1,24 +1,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TransactionalAPIMaddiApp.Repository.Procedure;
 using Microsoft.OpenApi.Models;
 using TransactionalAPIMaddiApp.Helpers.Token;
 using TransactionalAPIMaddiApp.Helpers.Mail;
 using TransactionalAPIMaddiApp.Repository.Account;
 using TransactionalAPIMaddiApp.Repository.Headquarters;
 using TransactionalAPIMaddiApp.Helpers.File;
-using TransactionalAPIMaddiApp.Data;
-using Microsoft.EntityFrameworkCore;
 using TransactionalAPIMaddiApp.Repository.Restaurant;
+using TransactionalAPIMaddiApp.Helpers.Sql;
+using TransactionalAPIMaddiApp.Repository.Category;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<DataContext>(o =>
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -46,10 +41,11 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddTransient<IRepositoryProcedure, RepositoryProcedure>();
 builder.Services.AddTransient<IRepositoryAccount, RepositoryAccount>();
 builder.Services.AddTransient<IRepositoryHeadquarters, RepositoryHeadquarters>();
 builder.Services.AddTransient<IRepositoryRestaurant, RepositoryRestaurant>();
+builder.Services.AddTransient<IRepositoryCategory, RepositoryCategory>();
+builder.Services.AddTransient<ISqlHelper, SqlHelper>();
 builder.Services.AddTransient<IMailHelper, MailHelper>();
 builder.Services.AddTransient<ITokenHelper, TokenHelper>();
 builder.Services.AddTransient<IFileHelper, FileHelper>();
@@ -89,6 +85,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseSwagger();
 app.UseSwaggerUI();
 

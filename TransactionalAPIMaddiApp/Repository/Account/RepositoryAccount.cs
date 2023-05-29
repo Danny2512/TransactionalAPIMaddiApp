@@ -1,190 +1,113 @@
-﻿using System.Data.SqlClient;
-using TransactionalAPIMaddiApp.Models;
-using Dapper;
-using System.Text.Json;
-using System.Numerics;
+﻿using TransactionalAPIMaddiApp.Models;
+using TransactionalAPIMaddiApp.Helpers.Sql;
 
 namespace TransactionalAPIMaddiApp.Repository.Account
 {
     public class RepositoryAccount : IRepositoryAccount
     {
-        private readonly string connectioString;
-        public RepositoryAccount(IConfiguration configuration)
+        private readonly ISqlHelper _sqlhelper;
+
+        public RepositoryAccount(ISqlHelper sqlhelper)
         {
-            connectioString = configuration.GetConnectionString("DefaultConnection");
+            _sqlhelper = sqlhelper;
         }
+
         public async Task<dynamic> UpdateUser(UpdateUserViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_UpdateUser @User_Id, @Name, @NameUser, @Document, @Email, @Phone;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_UpdateUser @User_Id, @Name, @NameUser, @Document, @Email, @Phone;",
-                                                        new
-                                                        {
-                                                            User_Id = model.User_Id,
-                                                            Name = model.Name,
-                                                            NameUser = model.NameUser,
-                                                            Document = model.Document,
-                                                            Email = model.Email,
-                                                            Phone = model.Phone
-                                                        });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                model.User_Id,
+                model.Name,
+                model.NameUser,
+                model.Document,
+                model.Email,
+                model.Phone
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> ChangePassword(ChangePasswordViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_ChangePassword @User_Id, @Password;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_ChangePassword @User_Id, @Password;",
-                                                        new
-                                                        {
-                                                            User_Id = model.User_Id,
-                                                            Password = model.Password
-                                                        });
+                model.User_Id,
+                model.Password
+            };
 
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> Login(LoginViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_Login @User, @Password";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync<dynamic>("exec sp_Login @User, @Password",
-                                                                new
-                                                                { User = model.User, Password = model.Pass });
-                }
-                catch(Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                User = model.User,
+                Password = model.Pass
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> ValidateUserById(ValidateUserByIdViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_ValidateUserById @User_Id";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync<dynamic>("exec sp_ValidateUserById @User_Id", new{ User_Id = model.User_Id });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                User_Id = model.User_Id
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> ValidateOTP(ValidateOTPViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_ValidateOTP @StrUser, @StrOTP;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_ValidateOTP @StrUser, @StrOTP;",
-                                                        new { StrUser = model.User, StrOTP = model.Cod });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                StrUser = model.User,
+                StrOTP = model.Cod
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> ChangePasswordByOTP(ChangePasswordByOTPViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_ChangePasswordByOTP @User_Id, @HsPassword, @StrOTP;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_ChangePasswordByOTP @User_Id, @HsPassword, @StrOTP;",
-                                                        new { User_Id = model.User_Id, HsPassword = model.Password, StrOTP = model.OTP });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                User_Id = model.User_Id,
+                HsPassword = model.Password,
+                StrOTP = model.OTP
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
+
         public async Task<dynamic> GetOTP(GetOTPViewModel model)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_GetOtpByUser @StrUser;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_GetOtpByUser @StrUser;",
-                                                        new { StrUser = model.User });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                StrUser = model.User
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
-        public async Task<dynamic> ValidateEmailConfirm(Guid User_Id)
+
+        public async Task<dynamic> ConfirmEmail(string User_Id)
         {
-            using (var connection = new SqlConnection(connectioString))
+            var query = @"exec sp_ConfirmEmail @User_Id;";
+            var parameters = new
             {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_ValidateEmailConfirm @User_Id;", new { User_Id = User_Id });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
-        }
-        public async Task<dynamic> ConfimEmail(string User_Id)
-        {
-            using (var connection = new SqlConnection(connectioString))
-            {
-                try
-                {
-                    return await connection.QueryAsync(@"exec sp_ConfirmEmail @User_Id;", new { User_Id = User_Id });
-                }
-                catch (Exception ex)
-                {
-                    return new[]
-                    {
-                        new { DapperRow = 0, Rpta = "Error en la transaccion: "+ex.Message, Cod = "-1" }
-                    };
-                }
-            }
+                User_Id = User_Id
+            };
+
+            return await _sqlhelper.ExecuteQueryAsync(query, parameters);
         }
     }
 }

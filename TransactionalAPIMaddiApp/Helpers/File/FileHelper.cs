@@ -4,7 +4,7 @@
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FileHelper(IWebHostEnvironment webHost)
+        public FileHelper(IConfiguration configuration, IWebHostEnvironment webHost)
         {
             _webHostEnvironment = webHost;
         }
@@ -19,22 +19,39 @@
                 file.CopyTo(stream);
             }
         }
+        public void DeleteFile(string fileName)
+        {
+            var filePath = Path.Combine(GetPath(), fileName);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
         public string GetPath()
         {
             return Path.Combine(_webHostEnvironment.ContentRootPath, "AssetsImage");
         }
-        public string GetFileBase64(string imageName)
+        public string GetFileBase64(string path)
         {
-            var filePath = Path.Combine(GetPath(), imageName);
+            var filePath = Path.Combine(GetPath(), path);
 
-            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            if (System.IO.File.Exists(filePath))
             {
-                using (var memoryStream = new MemoryStream())
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    stream.CopyTo(memoryStream);
-                    return Convert.ToBase64String(memoryStream.ToArray());
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        stream.CopyTo(memoryStream);
+                        return Convert.ToBase64String(memoryStream.ToArray());
+                    }
                 }
             }
+            else
+            {
+                // El archivo no existe, puedes manejar el caso de error de alguna manera
+                return null;
+            }
+
         }
     }
 }

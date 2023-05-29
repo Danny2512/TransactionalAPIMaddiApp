@@ -21,25 +21,25 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                 string port = _configuration["Mail:Port"];
                 string password = _configuration["Mail:Password"];
 
-                MimeMessage message = new();
-
+                MimeMessage message = new MimeMessage();
                 message.From.Add(new MailboxAddress(fromName, from));
 
                 foreach (var toEmail in toEmails)
                 {
-                    message.To.Add(new MailboxAddress("", toEmail));
+                    message.To.Add(MailboxAddress.Parse(toEmail));
                 }
-                if (ccEmails != null && ccEmails.Count() != 0)
+
+                if (ccEmails != null && ccEmails.Length != 0)
                 {
                     foreach (var ccEmail in ccEmails)
                     {
-                        message.Cc.Add(new MailboxAddress("", ccEmail));
+                        message.Cc.Add(MailboxAddress.Parse(ccEmail));
                     }
                 }
 
                 message.Subject = subject;
 
-                BodyBuilder bodyBuilder = new()
+                BodyBuilder bodyBuilder = new BodyBuilder
                 {
                     HtmlBody = body
                 };
@@ -52,29 +52,18 @@ namespace TransactionalAPIMaddiApp.Helpers.Mail
                     await client.SendAsync(message);
                     await client.DisconnectAsync(true);
                 }
-                return (new
-                {
-                    Rpta = "Email enviado",
-                    Cod = "0"
-                });
+
+                return new { Rpta = "Email enviado", Cod = "0" };
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("5.1.3"))
                 {
-                    return (new
-                    {
-                        Rpta = "Email inválido",
-                        Cod = "-1"
-                    });
+                    return new { Rpta = "Email inválido", Cod = "-1" };
                 }
                 else
                 {
-                    return (new
-                    {
-                        Rpta = ex.Message.ToString(),
-                        Cod = "-1"
-                    });
+                    return new { Rpta = ex.Message.ToString(), Cod = "-1" };
                 }
             }
         }

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace TransactionalAPIMaddiApp.Models
+﻿namespace TransactionalAPIMaddiApp.Models
 {
     public class ChangePasswordByOTPViewModel
     {

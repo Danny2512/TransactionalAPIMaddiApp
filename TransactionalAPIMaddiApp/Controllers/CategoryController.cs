@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TransactionalAPIMaddiApp.Models;
-using TransactionalAPIMaddiApp.Repository.Headquarters;
+using TransactionalAPIMaddiApp.Repository.Category;
 
 namespace TransactionalAPIMaddiApp.Controllers
 {
@@ -11,16 +11,17 @@ namespace TransactionalAPIMaddiApp.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class HeadquarterController : ControllerBase
+    public class CategoryController : ControllerBase
     {
-        private readonly IRepositoryHeadquarters _repository;
-        public HeadquarterController(IRepositoryHeadquarters repository)
+        private readonly IRepositoryCategory _repository;
+
+        public CategoryController(IRepositoryCategory repository)
         {
             _repository = repository;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetHeadquartersByRestaurant(GetHeadquartersByRestaurantViewModel model)
+        public async Task<IActionResult> GetCategoriesByRestaurant(GetCategoriesByRestaurantViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
             if (userIdClaim == null)
@@ -29,17 +30,17 @@ namespace TransactionalAPIMaddiApp.Controllers
             }
 
             model.User_Id = Guid.Parse(userIdClaim);
-            var peticion = await _repository.GetHeadquartersByRestaurant(model);
+            var peticion = await _repository.GetCategoriesByRestaurant(model);
 
             var response = peticion[0];
 
             return Ok(response.Cod != "-1"
-                ? new { Headquarters = response.Headquarters }
+                ? new { Categories = response.Categories }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetHeadquarterById(GetHeadquarterByIdViewModel model)
+        public async Task<IActionResult> GetCategoryById(GetCategoryByIdViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
             if (userIdClaim == null)
@@ -48,7 +49,7 @@ namespace TransactionalAPIMaddiApp.Controllers
             }
 
             model.User_Id = Guid.Parse(userIdClaim);
-            var peticion = await _repository.GetHeadquarterById(model);
+            var peticion = await _repository.GetCategoryById(model);
             var response = peticion[0];
 
             return Ok(response.Cod != "-1"
@@ -56,19 +57,13 @@ namespace TransactionalAPIMaddiApp.Controllers
                 {
                     Id = response.Id,
                     Name = response.StrName,
-                    Address = response.StrAddress,
-                    DtStart = response.DtStart,
-                    DtEnd = response.DtEnd,
-                    Booking = response.BiBooking,
-                    OrderTable = response.BiOrderTable,
-                    Delivery = response.BiDelivery,
                     Active = response.BiActive
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteHeadquarter(DeleteHeadquarterViewModel model)
+        public async Task<IActionResult> DeleteCategory(DeleteCategoryViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
             if (userIdClaim == null)
@@ -76,7 +71,7 @@ namespace TransactionalAPIMaddiApp.Controllers
                 return Unauthorized();
             }
             model.User_Id = Guid.Parse(userIdClaim);
-            var peticion = await _repository.DeleteHeadquarter(model);
+            var peticion = await _repository.DeleteCategory(model);
             var response = peticion[0];
             return Ok(new
             {
@@ -86,7 +81,7 @@ namespace TransactionalAPIMaddiApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateHeadquarter(UpdateHeadquarterViewModel model)
+        public async Task<IActionResult> UpdateCategory (UpdateCategoryViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
             if (userIdClaim == null)
@@ -94,7 +89,7 @@ namespace TransactionalAPIMaddiApp.Controllers
                 return Unauthorized();
             }
             model.User_Id = Guid.Parse(userIdClaim);
-            var peticion = await _repository.UpdateHeadquarter(model);
+            var peticion = await _repository.UpdateCategory(model);
             var response = peticion[0];
 
             return Ok(new
@@ -105,7 +100,7 @@ namespace TransactionalAPIMaddiApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateHeadquarter(CreateHeadquarterViewModel model)
+        public async Task<IActionResult> CreateCategory (CreateCategoryViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
             if (userIdClaim == null)
@@ -113,7 +108,7 @@ namespace TransactionalAPIMaddiApp.Controllers
                 return Unauthorized();
             }
             model.User_Id = Guid.Parse(userIdClaim);
-            var peticion = await _repository.CreateHeadquarter(model);
+            var peticion = await _repository.CreateCategory(model);
             var response = peticion[0];
 
             return Ok(new
