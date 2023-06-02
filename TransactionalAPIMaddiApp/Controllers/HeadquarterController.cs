@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using TransactionalAPIMaddiApp.Clases;
 using TransactionalAPIMaddiApp.Models;
 using TransactionalAPIMaddiApp.Repository.Headquarters;
 
@@ -31,10 +33,14 @@ namespace TransactionalAPIMaddiApp.Controllers
             model.User_Id = Guid.Parse(userIdClaim);
             var peticion = await _repository.GetHeadquartersByRestaurant(model);
 
-            var response = peticion[0];
+            var response = peticion[0]; 
+
+            List<Headquarter> headquarters = response.Headquarters != null
+            ? JsonConvert.DeserializeObject<List<Headquarter>>(response.Headquarters)
+            : new List<Headquarter>();
 
             return Ok(response.Cod != "-1"
-                ? new { Headquarters = response.Headquarters }
+                ? new { Headquarters = headquarters }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
 
@@ -52,17 +58,20 @@ namespace TransactionalAPIMaddiApp.Controllers
             var response = peticion[0];
 
             return Ok(response.Cod != "-1"
-                ? new
+                ? new Headquarter
                 {
                     Id = response.Id,
-                    Name = response.StrName,
-                    Address = response.StrAddress,
+                    StrName = response.StrName,
+                    StrAddress = response.StrAddress,
                     DtStart = response.DtStart,
                     DtEnd = response.DtEnd,
-                    Booking = response.BiBooking,
-                    OrderTable = response.BiOrderTable,
-                    Delivery = response.BiDelivery,
-                    Active = response.BiActive
+                    BiActive = response.BiActive,
+                    BiActiveTableBooking = response.BiActiveTableBooking,
+                    BiActiveOrderFromTheTable = response.BiActiveOrderFromTheTable,
+                    BiActiveDelivery = response.BiActiveDelivery,
+                    BiActiveRemarks = response.BiActiveRemarks,
+                    BiActiveChatBot = response.BiActiveChatBot,
+                    BiActiveCustomThemes = response.BiActiveCustomThemes
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }

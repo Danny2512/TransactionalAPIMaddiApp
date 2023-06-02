@@ -10,6 +10,9 @@ using TransactionalAPIMaddiApp.Helpers.File;
 using TransactionalAPIMaddiApp.Repository.Restaurant;
 using TransactionalAPIMaddiApp.Helpers.Sql;
 using TransactionalAPIMaddiApp.Repository.Category;
+using Microsoft.Extensions.FileProviders;
+using TransactionalAPIMaddiApp.Repository.SubCategory;
+using TransactionalAPIMaddiApp.Repository.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +48,8 @@ builder.Services.AddTransient<IRepositoryAccount, RepositoryAccount>();
 builder.Services.AddTransient<IRepositoryHeadquarters, RepositoryHeadquarters>();
 builder.Services.AddTransient<IRepositoryRestaurant, RepositoryRestaurant>();
 builder.Services.AddTransient<IRepositoryCategory, RepositoryCategory>();
+builder.Services.AddTransient<IRepositorySubCategory, RepositorySubCategory>();
+builder.Services.AddTransient<IRepositoryProduct, RepositoryProduct>();
 builder.Services.AddTransient<ISqlHelper, SqlHelper>();
 builder.Services.AddTransient<IMailHelper, MailHelper>();
 builder.Services.AddTransient<ITokenHelper, TokenHelper>();
@@ -88,6 +93,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "AssetsImage")),
+    RequestPath = "/AssetsImage"
+});
 
 app.UseHttpsRedirection();
 

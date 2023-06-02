@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using TransactionalAPIMaddiApp.Clases;
 using TransactionalAPIMaddiApp.Models;
 using TransactionalAPIMaddiApp.Repository.Category;
 
@@ -34,8 +36,12 @@ namespace TransactionalAPIMaddiApp.Controllers
 
             var response = peticion[0];
 
+            List<Category> categories = response.Categories != null
+            ? JsonConvert.DeserializeObject<List<Category>>(response.Categories)
+            : new List<Category>();
+
             return Ok(response.Cod != "-1"
-                ? new { Categories = response.Categories }
+                ? new { Categories = categories }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
 
@@ -53,11 +59,11 @@ namespace TransactionalAPIMaddiApp.Controllers
             var response = peticion[0];
 
             return Ok(response.Cod != "-1"
-                ? new
+                ? new Category
                 {
                     Id = response.Id,
-                    Name = response.StrName,
-                    Active = response.BiActive
+                    StrName = response.StrName,
+                    BiActive = response.BiActive
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }

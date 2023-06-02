@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using TransactionalAPIMaddiApp.Clases;
 using TransactionalAPIMaddiApp.Helpers.Mail;
 using TransactionalAPIMaddiApp.Helpers.Token;
 using TransactionalAPIMaddiApp.Models;
@@ -74,7 +76,7 @@ namespace TransactionalAPIMaddiApp.Controllers
             var peticion = await _repository.Login(model);
             var response = peticion[0];
 
-            if (response.Cod == "-1")
+            if (response.Cod.ToString() == "-1")
             {
                 return Ok(new { Rpta = response.Rpta, Cod = response.Cod });
             }
@@ -88,11 +90,15 @@ namespace TransactionalAPIMaddiApp.Controllers
                     return Ok(new
                     {
                         Rpta = "Para continuar, se ha enviado un email de confirmación para activar tu cuenta",
-                        Cod = "0"
+                        Cod = "-1"
                     });
                 }
 
-                return Ok(new
+                List<Restaurant> restaurants = response.Restaurants != null
+                    ? JsonConvert.DeserializeObject<List<Restaurant>>(response.Restaurants)
+                    : new List<Restaurant>();
+
+                var user = new
                 {
                     Id = response.Id,
                     Name = response.StrName,
@@ -103,8 +109,14 @@ namespace TransactionalAPIMaddiApp.Controllers
                     Phone = response.StrPhone,
                     BiPhoneConfirm = response.BiPhoneConfirm,
                     Remark = response.StrRemark,
-                    Restaurants = response.Restaurants,
+                    Restaurants = restaurants,
                     Token = _Token.CreateToken(new[] { new Claim("User_Id", response.Id.ToString()) }, TimeSpan.FromMinutes(30))
+                };
+
+                return Ok(new
+                {
+                    AppUser = user,
+                    Cod = response.Cod
                 });
             }
 
@@ -129,19 +141,28 @@ namespace TransactionalAPIMaddiApp.Controllers
             var peticion = await _repository.ValidateUserById(model);
             var response = peticion[0];
 
-            return Ok(response.Cod != "-1" 
-                ? new {
-                    Id = response.Id,
-                    Name = response.StrName,
-                    User = response.StrUser,
-                    Email = response.StrEmail,
-                    Document = response.StrDocument,
-                    BiEmailConfirm = response.BiEmailConfirm,
-                    Phone = response.StrPhone,
-                    BiPhoneConfirm = response.BiPhoneConfirm,
-                    Remark = response.StrRemark,
-                    Restaurants = response.Restaurants,
-                    Token = _Token.CreateToken(new[] { new Claim("User_Id", response.Id.ToString()) }, TimeSpan.FromMinutes(30))
+            List<Restaurant> restaurants = response.Restaurants != null
+            ? JsonConvert.DeserializeObject<List<Restaurant>>(response.Restaurants)
+            : new List<Restaurant>();
+
+            return Ok(response.Cod.ToString() != "-1"
+                ? new
+                {
+                    AppUser = new
+                    {
+                        Id = response.Id,
+                        Name = response.StrName,
+                        User = response.StrUser,
+                        Email = response.StrEmail,
+                        Document = response.StrDocument,
+                        BiEmailConfirm = response.BiEmailConfirm,
+                        Phone = response.StrPhone,
+                        BiPhoneConfirm = response.BiPhoneConfirm,
+                        Remark = response.StrRemark,
+                        Restaurants = restaurants,
+                        Token = _Token.CreateToken(new[] { new Claim("User_Id", response.Id.ToString()) }, TimeSpan.FromMinutes(30))
+                    },
+                    Cod = response.Cod
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
@@ -152,11 +173,11 @@ namespace TransactionalAPIMaddiApp.Controllers
             var peticion = await _repository.GetOTP(model);
             var response = peticion[0];
 
-            if (response.Cod == "-1")
+            if (response.Cod.ToString() == "-1")
             {
                 return Ok(new { Rpta = response.Rpta, Cod = response.Cod });
             }
-            else if (response.Cod != "-1")
+            else if (response.Cod.ToString() != "-1")
             {
                 string emailBody = $@"<!DOCTYPE html>
                                 <html lang='en' xmlns='http://www.w3.org/1999/xhtml' xmlns:o='urn:schemas-microsoft-com:office:office'>
@@ -210,20 +231,29 @@ namespace TransactionalAPIMaddiApp.Controllers
             var peticion = await _repository.ChangePasswordByOTP(model);
             var response = peticion[0];
 
-            return Ok(response.Cod != "-1"
+            List<Restaurant> restaurants = response.Restaurants != null
+            ? JsonConvert.DeserializeObject<List<Restaurant>>(response.Restaurants)
+            : new List<Restaurant>();
+
+            return Ok(response.Cod.ToString() != "-1"
                 ? new
                 {
-                    Id = response.Id,
-                    Name = response.StrName,
-                    User = response.StrUser,
-                    Email = response.StrEmail,
-                    Document = response.StrDocument,
-                    BiEmailConfirm = response.BiEmailConfirm,
-                    Phone = response.StrPhone,
-                    BiPhoneConfirm = response.BiPhoneConfirm,
-                    Remark = response.StrRemark,
-                    Restaurants = response.Restaurants,
-                    Token = _Token.CreateToken(new[] { new Claim("User_Id", response.Id.ToString()) }, TimeSpan.FromMinutes(30))
+                    AppUser = new
+                    {
+                        Id = response.Id,
+                        Name = response.StrName,
+                        User = response.StrUser,
+                        Email = response.StrEmail,
+                        Document = response.StrDocument,
+                        BiEmailConfirm = response.BiEmailConfirm,
+                        Phone = response.StrPhone,
+                        BiPhoneConfirm = response.BiPhoneConfirm,
+                        Remark = response.StrRemark,
+                        Restaurants = restaurants,
+                        Token = _Token.CreateToken(new[] { new Claim("User_Id", response.Id.ToString()) }, TimeSpan.FromMinutes(30))
+                    },
+                    Rpta = response.Rpta,
+                    Cod = response.Cod
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }

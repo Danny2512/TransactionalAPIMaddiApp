@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TransactionalAPIMaddiApp.Clases;
 using TransactionalAPIMaddiApp.Helpers.File;
 using TransactionalAPIMaddiApp.Models;
 using TransactionalAPIMaddiApp.Repository.Restaurant;
@@ -21,8 +22,8 @@ namespace TransactionalAPIMaddiApp.Controllers
             _repository = repository;
             _file = file;
         }
+        
         [HttpPost]
-
         public async Task<IActionResult> GetRestaurantById(GetRestaurantByIdViewModel model)
         {
             var userIdClaim = User.FindFirstValue("User_Id");
@@ -35,15 +36,15 @@ namespace TransactionalAPIMaddiApp.Controllers
             var response = peticion[0];
 
             return Ok(response.Cod != "-1"
-                ? new
+                ? new Restaurant
                 {
                     Id = response.Id,
-                    Name = response.StrName,
-                    Nit = response.StrNit,
-                    Image = _file.GetFileBase64(Path.Combine(_file.GetPath(), response.StrImageUrl)),
-                    Description = response.StrDescription,
-                    Website = response.StrWebsite,
-                    Active = response.BiActive
+                    StrName = response.StrName,
+                    StrNit = response.StrNit,
+                    StrImageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}/AssetsImage/{response.StrImageUrl}",
+                    StrDescription = response.StrDescription,
+                    StrWebsite = response.StrWebsite,
+                    BiActive = response.BiActive
                 }
                 : new { Rpta = response.Rpta, Cod = response.Cod });
         }
